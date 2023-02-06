@@ -1,0 +1,1160 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type BarcodeChangeResponse {
+    errors: [String!]!
+    item: InventoryItem!
+    success: Boolean!
+}
+
+type BaseInventoryPurchaseOrderItem {
+    deliveryDocketNumber: String
+    id: ID!
+    item: InventoryItem
+    itemCode: String
+    itemCostChanged: Boolean!
+    itemCostExGst: Float!
+    itemName: String!
+    orderTableItem: InventoryOrderTableItem
+    qtyOrdered: Float!
+    unit: String
+}
+
+type ChartResponse {
+    data: [Float]!
+    labels: [Date!]!
+}
+
+type DeleteType {
+    deleted: Boolean!
+}
+
+type DeleteUnitResponse {
+    success: Boolean!
+}
+
+type DispatchActivity {
+    active: Boolean!
+    endDate: DateTime!
+    id: ID!
+    job(pagination: OffsetPaginationInput): DispatchJob!
+    staff(pagination: OffsetPaginationInput): DispatchStaff!
+    startDate: DateTime!
+    uuid: UUID
+}
+
+type DispatchAttachment {
+    attachmentName: String!
+    file(height: Int, width: Int): String
+    fileType: String!
+    id: ID!
+    job(pagination: OffsetPaginationInput): DispatchJob!
+    location: Point
+    staff(pagination: OffsetPaginationInput): DispatchStaff
+    timestamp: DateTime
+    url: String!
+    uuid: UUID!
+}
+
+type DispatchAvailability {
+    endDate: DateTime!
+    id: ID!
+    name: String!
+    staff(pagination: OffsetPaginationInput): DispatchStaff
+    startDate: DateTime!
+    uuid: UUID!
+}
+
+type DispatchCategory {
+    colour: String!
+    id: ID!
+    name: String!
+    uuid: UUID!
+}
+
+type DispatchClient {
+    id: ID!
+    name: String!
+    uuid: UUID
+}
+
+type DispatchContact {
+    email: String!
+    first: String!
+    id: ID!
+    job(pagination: OffsetPaginationInput): DispatchJob!
+    last: String!
+    mobile: String!
+    uuid: UUID!
+}
+
+type DispatchJob {
+    active: Boolean!
+    attachments(filters: DispatchAttachmentFilter, pagination: OffsetPaginationInput): [DispatchAttachment!]!
+    category(pagination: OffsetPaginationInput): DispatchCategory
+    company(pagination: OffsetPaginationInput): DispatchClient
+    contact: DispatchContact
+    generatedJobId: String!
+    geoCity: String!
+    geoCountry: String!
+    geoNumber: String!
+    geoPostcode: String!
+    geoState: String!
+    geoStreet: String!
+    id: ID!
+    jobDescription: String!
+    location: Point
+    onTheGo: Boolean!
+    prepared: Boolean!
+    purchaseOrderNumber: String
+    queue(pagination: OffsetPaginationInput): DispatchQueue
+    status: String!
+    uuid: UUID
+}
+
+type DispatchQueue {
+    hideFromKiosk: Boolean!
+    id: ID!
+    jobs(filters: DispatchJobFilter, order: DispatchJobOrder, pagination: OffsetPaginationInput): [DispatchJob!]!
+    name: String!
+    uuid: UUID!
+}
+
+type DispatchStaff {
+    active: Boolean!
+    activities(filters: DispatchActivitiesFilter, pagination: OffsetPaginationInput): [DispatchActivity!]!
+    color: String!
+    first: String!
+    fullName: String!
+    hideFromKiosk: Boolean!
+    hideFromSchedule: Boolean!
+    id: ID!
+    jobTitle: String!
+    last: String!
+    mobile: String
+    sendNotifications: Boolean!
+    uuid: UUID
+}
+
+type InventoryBarcode {
+    barcode: String!
+    id: ID!
+    item: InventoryItem!
+    type: String!
+}
+
+type InventoryCategory {
+    defaultPrimaryUnit: String!
+    defaultSubunit: String
+    defaultSubunitTracking: Boolean!
+    defaultSubunitsPerItem: Float
+    department: InventoryDepartment
+    id: ID!
+    name: String!
+    properties(pagination: OffsetPaginationInput): [InventoryProperty!]!
+}
+
+type InventoryDepartment {
+    currentPoNumber: Int!
+    defaultPoMessage: JSONScalar
+    id: ID!
+    name: String!
+    poPrefix: String!
+    reference: String!
+    xeroAccount: UUID
+    xeroUuid: UUID
+}
+
+type InventoryItem {
+    actualStock(stocktake: ID): Int
+    alertStock: Int
+    barcodes: [InventoryBarcode!]!
+    category: InventoryCategory
+    costExGst: Float!
+    costPerUnit: Float
+    createdAt: DateTime!
+    discontinued: Boolean!
+    displayStock: String!
+    entries(stocktake: ID!): [InventoryStocktakeEntry!]!
+    excludeFromStocktake: Boolean!
+    id: ID!
+    image(height: Int, width: Int): String
+    media: Media
+    name: String!
+    notes: String!
+    numOrdered: Int!
+    numOutstanding: Int!
+    numSupplied: Int!
+    orderTable: [InventoryOrderTableItem!]!
+    orderTableOnly: Boolean!
+    orderUnit: String
+    primaryUnit: String
+    primaryUnitNormal: String
+    propertyValues(pagination: OffsetPaginationInput): [InventoryPropertyValue!]!
+    stock: Int
+    subunit: String
+    subunitNormal: String
+    subunitTracking: Boolean
+    subunitTrackingNormal: Boolean!
+    subunitsPerItem: Float
+    supplier: InventorySupplier
+    supplierPartNumber: String!
+    supplierVariant: String!
+    uniqueId: String
+    updatedAt: DateTime
+}
+
+type InventoryItemImportResponse {
+    errors: [String!]!
+    success: Boolean!
+}
+
+type InventoryItemUnit {
+    capacity: Float!
+    epc: String
+    id: ID!
+    item: InventoryItem!
+    stock: Float!
+}
+
+type InventoryOrderTableItem {
+    costExGst: Float
+    id: ID!
+    item: InventoryItem!
+    minQty: Float!
+    subunitQty: Float!
+    unit: String!
+}
+
+type InventoryProperty {
+    category: InventoryCategory!
+    id: ID!
+    name: String!
+    values(pagination: OffsetPaginationInput): [InventoryPropertyValue!]!
+}
+
+type InventoryPropertyValue {
+    id: ID!
+    name: String!
+    property(pagination: OffsetPaginationInput): InventoryProperty!
+}
+
+type InventoryPurchaseOrder {
+    attachments: [Media!]!
+    createdAt: DateTime!
+    department: InventoryDepartment
+    history: [InventoryPurchaseOrderHistory!]!
+    id: ID!
+    items: [InventoryPurchaseOrderItem!]!
+    notes: String
+    orderNumber: String
+    poNumber: String
+    status: String!
+    supplier: InventorySupplier
+    updatedAt: DateTime
+    xeroContact: XeroContact
+    xeroPo: UUID
+}
+
+type InventoryPurchaseOrderHistory {
+    createdAt: DateTime!
+    id: ID!
+    item: BaseInventoryPurchaseOrderItem
+    status: String
+    supplied: Float!
+    updatedAt: DateTime
+    user: User
+}
+
+type InventoryPurchaseOrderItem {
+    deliveryDocketNumber: String
+    id: ID!
+    item: InventoryItem
+    itemCode: String
+    itemCostChanged: Boolean!
+    itemCostExGst: Float!
+    itemName: String!
+    orderTableItem: InventoryOrderTableItem
+    qtyOrdered: Float!
+    qtySupplied: Float!
+    unit: String
+}
+
+type InventoryPurchaseOrderLastContact {
+    label: String!
+    value: String!
+}
+
+type InventoryStocktake {
+    createdAt: DateTime!
+    entries: [InventoryStocktakeEntry!]!
+    finishedAt: DateTime
+    id: ID!
+    notes: String
+    number: String!
+    startedAt: DateTime
+    status: String!
+}
+
+type InventoryStocktakeEntry {
+    altitude: Float
+    count: Int
+    createdAt: DateTime!
+    id: ID!
+    item: InventoryItem
+    location: Point
+    stocktake: InventoryStocktake!
+}
+
+type InventorySupplier {
+    id: ID!
+    name: String!
+    orderNumberError: String!
+    orderNumberRegex: String!
+    reference: String!
+}
+
+type Media {
+    fileSize: Int!
+    fileType: String!
+    fileUrl: String!
+    hash: String!
+    id: ID!
+    image(height: Int, width: Int): String
+    tags: [MediaTag!]
+    title: String!
+}
+
+type MediaTag {
+    id: ID!
+    name: String!
+    slug: String!
+}
+
+type Mutation {
+    closeStocktake(pk: ID!): InventoryStocktake!
+    combineInventoryItemUnits(primaryPk: ID!, secondaryPks: [ID!]!, stock: Float!): InventoryItemUnit!
+    copyPurchaseOrder(pk: ID!): InventoryPurchaseOrder!
+    createCategory(data: CategoryInput!): InventoryCategory!
+    createDepartment(data: DepartmentInput!): InventoryDepartment!
+    createDispatchActivity(endDate: DateTime!, jobId: ID!, staffId: ID!, startDate: DateTime!): DispatchActivity!
+    createDispatchAttachment(bbox: String!, data: String!, jobId: ID!, zoom: Int!): DispatchAttachment!
+    createDispatchJob(data: DispatchJobInput!): DispatchJob!
+    createInventoryItem(data: InventoryItemInput!): InventoryItem!
+    createInventoryItemUnit(capacity: Float, item: ID!, stock: Float): InventoryItemUnit!
+    createInventoryItemUnits(items: [InventoryUnitCreateInput!]!): [InventoryItemUnit!]!
+    createMediaFile(data: MediaInput!): Media!
+    createPurchaseOrder(data: PurchaseOrderInput!): InventoryPurchaseOrder!
+    createStocktake: InventoryStocktake!
+    createStocktakeEntry(data: StocktakeEntryInput!): InventoryStocktakeEntry!
+    createSupplier(data: SupplierInput!): InventorySupplier!
+    createUser(data: UserInput!): User!
+    deleteCategories(filters: CategoryMutateFilter): [InventoryCategory!]!
+    deleteDepartments(filters: DepartmentMutateFilter): [InventoryDepartment!]!
+    deleteDispatchActivity(pk: ID!): ID
+    deleteInventoryItemUnit(pk: ID!): DeleteUnitResponse!
+    deleteInventoryItems(filters: ItemMutateFilter): [InventoryItem!]!
+    deleteMediaFiles(filters: MediaMutateFilter): [Media!]!
+    deleteStocktakeEntries(filters: StocktakeEntryMutateFilter): [InventoryStocktakeEntry!]!
+    deleteSuppliers(filters: SupplierMutateFilter): [InventorySupplier!]!
+    deleteTokenCookie: DeleteType!
+    deliveredPurchaseOrder(adjustInventory: Boolean!, items: [PurchaseOrderItemDeliveredInput!]!, pk: ID!): InventoryPurchaseOrder!
+    importInventoryItems(file: Upload!): InventoryItemImportResponse!
+    refreshToken(refreshToken: String, refresh_token: String, token: String): RefreshedTokenType!
+    sendPurchaseOrder(email: String!, message: String!, pk: ID!): InventoryPurchaseOrder!
+    tokenAuth(email: String!, password: String!, refresh_token: String, token: String): TokenDataType!
+    updateCategories(data: CategoryPartialInput!, filters: CategoryMutateFilter): [InventoryCategory!]!
+    updateDepartments(data: DepartmentPartialInput!, filters: DepartmentMutateFilter): [InventoryDepartment!]!
+    updateDispatchJob(data: DispatchJobPartialInput!, filters: DispatchJobMutateFilter): [DispatchJob!]!
+    updateDispatchStaff(data: DispatchStaffInput!, filters: DispatchStaffMutateFilter): [DispatchStaff!]!
+    updateInventoryItemBarcodes(addBarcodes: [InventoryBarcodeInput!], pk: ID!, removeBarcodes: [ID!]): BarcodeChangeResponse!
+    updateInventoryItemCount(pk: ID!, quantity: Int!): InventoryItem!
+    updateInventoryItemImage(image: Upload!, pk: ID!): InventoryItem!
+    updateInventoryItemUnitEpc(epc: String!, pk: ID!): InventoryItemUnit!
+    updateInventoryItemUnitStock(pk: ID!, stock: Float!): InventoryItemUnit!
+    updateInventoryItemUnitsEpc(items: [InventoryUnitUpdateEPCInput!]!): [InventoryItemUnit!]!
+    updateInventoryItems(data: InventoryItemPartialInput!, filters: ItemMutateFilter): [InventoryItem!]!
+    updateMediaFiles(data: MediaPartialInput!, filters: MediaMutateFilter): [Media!]!
+    updatePurchaseOrders(data: PurchaseOrderPartialInput!, filters: PurchaseOrderMutateFilter): [InventoryPurchaseOrder!]!
+    updateSuppliers(data: SupplierPartialInput!, filters: SupplierMutateFilter): [InventorySupplier!]!
+    updateUsers(data: UserPartialInput!, filters: UserMutateFilter): [User!]!
+    verifyToken(token: String!): PayloadType!
+    xeroCreatePayment(amount: Float!, email: String, invoiceId: UUID!, invoiceType: String!, stripeToken: String!, tenantId: UUID!): StripeResponse!
+}
+
+type PayloadType {
+    payload: TokenPayloadType!
+}
+
+type Point {
+    lat: Float!
+    lng: Float!
+}
+
+type Query {
+    currentStocktake: InventoryStocktake
+    dispatchActivities(filters: DispatchActivitiesFilter, pagination: OffsetPaginationInput): [DispatchActivity!]!
+    dispatchActivity(pagination: OffsetPaginationInput, pk: ID): DispatchActivity!
+    dispatchAvailability(filters: DispatchAvailabilityFilter, pagination: OffsetPaginationInput): [DispatchAvailability!]!
+    dispatchCategories(filters: DispatchCategoryFilter, pagination: OffsetPaginationInput): [DispatchCategory!]!
+    dispatchCategory(pagination: OffsetPaginationInput, pk: ID): DispatchCategory!
+    dispatchClient(pagination: OffsetPaginationInput, pk: ID): DispatchClient!
+    dispatchClients(filters: DispatchClientFilter, pagination: OffsetPaginationInput): [DispatchClient!]!
+    dispatchJob(pagination: OffsetPaginationInput, pk: ID): DispatchJob!
+    dispatchJobs(filters: DispatchJobFilter, order: DispatchJobOrder, pagination: OffsetPaginationInput): [DispatchJob!]!
+    dispatchQueue(pagination: OffsetPaginationInput, pk: ID): DispatchQueue!
+    dispatchQueues(filters: DispatchQueueFilter, pagination: OffsetPaginationInput): [DispatchQueue!]!
+    dispatchStaff(pagination: OffsetPaginationInput, pk: ID): DispatchStaff!
+    dispatchStaffs(filters: DispatchStaffFilter, pagination: OffsetPaginationInput): [DispatchStaff!]!
+    inventoryCategories(filters: CategoryFilter, order: CategoryOrder, pagination: OffsetPaginationInput): [InventoryCategory!]!
+    inventoryCategory(pk: ID): InventoryCategory!
+    inventoryDepartment(pk: ID): InventoryDepartment!
+    inventoryDepartments(pagination: OffsetPaginationInput): [InventoryDepartment!]!
+    inventoryGetPoNumber(department: ID!): String!
+    inventoryItem(pk: ID): InventoryItem!
+    inventoryItemByBarcode(barcode: String!): InventoryItem
+    inventoryItemHistogram(endDate: Date, pk: ID!, startDate: Date, view: GraphView = DAY): ChartResponse!
+    inventoryItemUnit(epc: String!): InventoryItemUnit!
+    inventoryItemUnits(filters: ItemUnitFilter, pagination: OffsetPaginationInput): [InventoryItemUnit!]!
+    inventoryItems(filters: ItemFilter, order: ItemOrder, pagination: OffsetPaginationInput): [InventoryItem!]!
+    inventoryLastXeroContact(department: ID!, supplier: ID!): InventoryPurchaseOrderLastContact
+    inventoryPurchaseOrder(pk: ID): InventoryPurchaseOrder!
+    inventoryPurchaseOrders(filters: PurchaseOrderFilter, order: PurchaseOrderOrder, pagination: OffsetPaginationInput): [InventoryPurchaseOrder!]!
+    inventoryStocktake(pk: ID): InventoryStocktake!
+    inventoryStocktakeEntries(filters: StocktakeEntryFilter, pagination: OffsetPaginationInput): [InventoryStocktakeEntry!]!
+    inventoryStocktakes(filters: StocktakeFilter, pagination: OffsetPaginationInput): [InventoryStocktake!]!
+    inventorySupplier(pk: ID): InventorySupplier!
+    inventorySuppliers(filters: SupplierFilter, order: SupplierOrder, pagination: OffsetPaginationInput): [InventorySupplier!]!
+    me: User
+    mediaFile(pk: ID): Media!
+    mediaFiles(filters: MediaFilter, pagination: OffsetPaginationInput): [Media!]!
+    mediaTags: [MediaTag!]!
+    user(pk: ID): User!
+    users(pagination: OffsetPaginationInput): [User!]!
+    xeroAccounts(tenantId: UUID!): [XeroAccount!]
+    xeroConnections: [XeroConnection!]
+    xeroContact(id: UUID!, tenantId: UUID!): XeroContact
+    xeroContacts(query: String!, tenantId: UUID!): [XeroContact!]!
+    xeroInvoices(query: String!, tenantId: UUID): [XeroInvoice!]!
+    xeroOrganisation(tenantId: UUID!): XeroOrganisation
+    xeroPrepayments(query: String!, tenantId: UUID): [XeroPrepayment!]!
+}
+
+type RefreshedTokenType {
+    payload: TokenPayloadType!
+    refreshExpiresIn: Int!
+    refreshToken: String!
+    token: String!
+}
+
+type StripeResponse {
+    error: Boolean!
+    message: String
+}
+
+type TokenDataType {
+    payload: TokenPayloadType!
+    refreshExpiresIn: Int!
+    refreshToken: String!
+    token: String!
+}
+
+type TokenPayloadType {
+    email: String!
+    exp: Int!
+    origIat: Int!
+}
+
+type User {
+    email: String!
+    firstName: String!
+    fullName: String!
+    id: ID!
+    isActive: Boolean!
+    isStaff: Boolean!
+    isSuperuser: Boolean!
+    lastName: String!
+    uuid: UUID!
+}
+
+type XeroAccount {
+    Class: String
+    accountId: UUID!
+    addToWatchlist: Boolean!
+    bankAccountNumber: String
+    bankAccountType: String
+    code: String
+    currencyCode: String
+    description: String
+    enablePaymentsToAccount: Boolean!
+    hasAttachments: Boolean!
+    name: String
+    reportingCode: String
+    reportingCodeName: String
+    showInExpenseClaims: Boolean!
+    status: String
+    systemAccount: String
+    taxType: String
+    type: String
+    updatedDateUtc: String
+    validationErrors: String
+}
+
+type XeroConnection {
+    authEventId: UUID!
+    createdDateUtc: DateTime!
+    id: UUID!
+    tenantId: UUID!
+    tenantName: String
+    tenantType: String
+    updatedDateUtc: DateTime!
+}
+
+type XeroContact {
+    accountNumber: String
+    accountsPayableTaxType: String
+    accountsReceivableTaxType: String
+    addresses: String
+    attachments: String
+    balances: String
+    bankAccountDetails: String
+    batchPayments: String
+    brandingTheme: String
+    companyNumber: String
+    contactGroups: String
+    contactId: UUID!
+    contactNumber: String
+    contactPersons: String
+    contactStatus: String
+    defaultCurrency: String
+    discount: Float!
+    emailAddress: String
+    firstName: String
+    hasAttachments: Boolean!
+    hasValidationErrors: Boolean!
+    isCustomer: Boolean!
+    isSupplier: Boolean!
+    lastName: String
+    mergedToContactId: UUID!
+    name: String
+    paymentTerms: String
+    phones: String
+    purchasesDefaultAccountCode: String
+    purchasesDefaultLineAmountType: String
+    purchasesTrackingCategories: String
+    salesDefaultAccountCode: String
+    salesDefaultLineAmountType: String
+    salesTrackingCategories: String
+    skypeUserName: String
+    statusAttributeString: String
+    taxNumber: String
+    trackingCategoryName: String
+    trackingCategoryOption: String
+    updatedDateUtc: String
+    validationErrors: String
+    website: String
+    xeroNetworkKey: String
+}
+
+type XeroInvoice {
+    amountDue: Float!
+    amountPaid: Float!
+    connection: XeroConnection
+    contact: XeroContact
+    currencyCode: String
+    invoiceId: UUID!
+    invoiceNumber: String
+    payments: [XeroPayment!]!
+    reference: String
+    subTotal: Float!
+    total: Float!
+    totalTax: Float!
+}
+
+type XeroOrganisation {
+    Class: String
+    addresses: String
+    apiKey: String
+    baseCurrency: String
+    countryCode: String
+    createdDateUtc: String
+    defaultPurchasesTax: String
+    defaultSalesTax: String
+    edition: String
+    employerIdentificationNumber: String
+    endOfYearLockDate: DateTime!
+    externalLinks: String
+    financialYearEndDay: Int!
+    financialYearEndMonth: Int!
+    isDemoCompany: Boolean!
+    legalName: String
+    lineOfBusiness: String
+    name: String
+    organisationEntityType: String
+    organisationId: UUID!
+    organisationStatus: String
+    organisationType: String
+    paymentTerms: String
+    paysTax: Boolean!
+    periodLockDate: DateTime!
+    phones: String
+    registrationNumber: String
+    salesTaxBasis: String
+    salesTaxPeriod: String
+    shortCode: String
+    taxNumber: String
+    timezone: String
+    version: String
+}
+
+type XeroPayment {
+    account: String
+    amount: Float!
+    bankAccountNumber: String
+    bankAmount: Float!
+    batchPaymentId: UUID!
+    code: String
+    creditNote: String
+    creditNoteNumber: String
+    currencyRate: Float!
+    date: DateTime!
+    details: String
+    hasAccount: Boolean!
+    hasValidationErrors: Boolean!
+    invoice: String
+    invoiceNumber: String
+    isReconciled: Boolean!
+    overpayment: String
+    particulars: String
+    paymentId: UUID!
+    paymentType: String
+    prepayment: String
+    reference: String
+    status: String
+    statusAttributeString: String
+    updatedDateUtc: String
+    validationErrors: String
+}
+
+type XeroPrepayment {
+    connection: XeroConnection
+    contact: XeroContact
+    currencyCode: String
+    payments: [XeroPayment!]!
+    prepaymentId: UUID!
+    reference: String
+    remainingCredit: Float!
+    subTotal: Float!
+    total: Float!
+    totalTax: Float!
+}
+
+enum GraphView {
+    DAY
+    MONTH
+    YEAR
+}
+
+enum LowStock {
+    IN_STOCK
+    LOW_STOCK
+    LOW_STOCK_PLUS_ORDERS
+}
+
+enum Ordering {
+    ASC
+    DESC
+}
+
+"Date (isoformat)"
+scalar Date
+
+"Date with time (isoformat)"
+scalar DateTime
+
+"The GenericScalar scalar type represents a generic GraphQL scalar value that could be: List or Object."
+scalar JSONScalar
+
+scalar UUID
+
+scalar Upload
+
+input CategoryFilter {
+    supplier: [ID!]
+}
+
+input CategoryInput {
+    defaultPrimaryUnit: String
+    defaultSubunit: String
+    defaultSubunitTracking: Boolean
+    defaultSubunitsPerItem: Float
+    department: OneToManyInput
+    id: ID
+    name: String!
+    properties: [PropertyInput!]
+}
+
+input CategoryMutateFilter {
+    pks: [ID!]
+}
+
+input CategoryOrder {
+    department: DepartmentOrder
+    name: Ordering
+}
+
+input CategoryPartialInput {
+    defaultPrimaryUnit: String
+    defaultSubunit: String
+    defaultSubunitTracking: Boolean
+    defaultSubunitsPerItem: Float
+    department: OneToManyInput
+    id: ID
+    name: String
+    properties: [PropertyInput!]
+}
+
+input DepartmentInput {
+    currentPoNumber: Int
+    defaultPoMessage: JSONScalar
+    id: ID
+    name: String!
+    poPrefix: String!
+    reference: String
+    xeroAccount: UUID
+    xeroUuid: UUID
+}
+
+input DepartmentMutateFilter {
+    pks: [ID!]
+}
+
+input DepartmentOrder {
+    name: Ordering
+}
+
+input DepartmentPartialInput {
+    currentPoNumber: Int
+    defaultPoMessage: JSONScalar
+    id: ID
+    name: String
+    poPrefix: String
+    reference: String
+    xeroAccount: UUID
+    xeroUuid: UUID
+}
+
+input DispatchActivitiesFilter {
+    active: Boolean
+    endDateLte: DateTime
+    jobActive: Boolean
+    startDateGte: DateTime
+    startDateLte: DateTime
+}
+
+input DispatchAttachmentFilter {
+    active: Boolean
+    fileType: [String!]
+}
+
+input DispatchAvailabilityFilter {
+    active: Boolean
+    endDateGte: DateTime
+    startDateLte: DateTime
+}
+
+input DispatchCategoryFilter {
+    active: Boolean
+}
+
+input DispatchClientFilter {
+    active: Boolean
+    search: String
+}
+
+input DispatchJobFilter {
+    active: Boolean
+    activitiesStartDateGte: DateTime
+    queue: UUID
+    search: String
+    status: [String!]
+}
+
+input DispatchJobInput {
+    category: OneToManyInput
+    company: NewCompanyInput
+    geoCity: String!
+    geoCountry: String!
+    geoNumber: String!
+    geoPostcode: String!
+    geoState: String!
+    geoStreet: String!
+    location: PointInput
+    onTheGo: Boolean
+    prepared: Boolean
+    queue: OneToManyInput
+    status: String!
+}
+
+input DispatchJobMutateFilter {
+    pks: [ID!]
+}
+
+input DispatchJobOrder {
+    generatedJobId: Ordering
+    onTheGo: Ordering
+    startDate: Ordering
+}
+
+input DispatchJobPartialInput {
+    category: OneToManyInput
+    company: NewCompanyInput
+    geoCity: String
+    geoCountry: String
+    geoNumber: String
+    geoPostcode: String
+    geoState: String
+    geoStreet: String
+    location: PointInput
+    onTheGo: Boolean
+    prepared: Boolean
+    queue: OneToManyInput
+    status: String
+}
+
+input DispatchQueueFilter {
+    active: Boolean
+    hideFromKiosk: Boolean
+}
+
+input DispatchStaffFilter {
+    active: Boolean
+    hideFromKiosk: Boolean
+    hideFromSchedule: Boolean
+    sendNotifications: Boolean
+}
+
+input DispatchStaffInput {
+    hideFromKiosk: Boolean
+    sendNotifications: Boolean
+}
+
+input DispatchStaffMutateFilter {
+    pks: [ID!]
+}
+
+input InventoryBarcodeInput {
+    barcode: String!
+    type: String!
+}
+
+input InventoryItemInput {
+    alertStock: Int
+    barcodes: ManyToOneInput
+    category: OneToManyInput
+    costExGst: Float!
+    costPerUnit: Float
+    createdAt: DateTime
+    discontinued: Boolean
+    excludeFromStocktake: Boolean
+    media: OneToManyInput
+    name: String!
+    notes: String
+    orderTable: [InventoryOrderTableItemInput!]
+    orderTableOnly: Boolean
+    primaryUnit: String
+    propertyValues: ManyToManyInput
+    stock: Int
+    subunit: String
+    subunitTracking: Boolean
+    subunitsPerItem: Float
+    supplier: OneToManyInput
+    supplierPartNumber: String
+    supplierVariant: String
+    updatedAt: DateTime
+}
+
+input InventoryItemPartialInput {
+    alertStock: Int
+    barcodes: ManyToOneInput
+    category: OneToManyInput
+    costExGst: Float
+    costPerUnit: Float
+    createdAt: DateTime
+    deleteImage: Boolean
+    discontinued: Boolean
+    excludeFromStocktake: Boolean
+    media: OneToManyInput
+    name: String
+    notes: String
+    orderTable: [InventoryOrderTableItemInput!]
+    orderTableOnly: Boolean
+    primaryUnit: String
+    propertyValues: ManyToManyInput
+    stock: Int
+    subunit: String
+    subunitTracking: Boolean
+    subunitsPerItem: Float
+    supplier: OneToManyInput
+    supplierPartNumber: String
+    supplierVariant: String
+    updatedAt: DateTime
+}
+
+input InventoryOrderTableItemInput {
+    costExGst: Float!
+    id: ID
+    minQty: Float!
+    subunitQty: Float!
+    unit: String!
+}
+
+input InventoryUnitCreateInput {
+    capacity: Float
+    item: ID!
+    quantity: Int!
+    stock: Float
+}
+
+input InventoryUnitUpdateEPCInput {
+    epc: String!
+    unit: ID!
+}
+
+input ItemCategoryFilter {
+    pk: ID!
+    properties: [ItemPropertyFilter!]!
+}
+
+input ItemFilter {
+    category: [ItemCategoryFilter!]
+    department: [ID!]
+    discontinued: Boolean
+    excludeFromStocktake: Boolean
+    hasOutstandingOrders: Boolean
+    hasStocktakeEntries: Boolean
+    lowInStock: LowStock
+    pks: [ID!]
+    search: String
+    stocktake: ID
+    stocktakeContext: ID
+    supplier: [ID!]
+}
+
+input ItemMutateFilter {
+    pks: [ID!]
+}
+
+input ItemOrder {
+    name: Ordering
+    supplier: SupplierOrder
+}
+
+input ItemPropertyFilter {
+    pk: ID!
+    values: [ID!]!
+}
+
+input ItemUnitFilter {
+    item: ID
+}
+
+input ManyToManyInput {
+    add: [ID!]
+    remove: [ID!]
+    set: [ID!]
+}
+
+input ManyToOneInput {
+    add: [ID!]
+    remove: [ID!]
+    set: [ID!]
+}
+
+input MediaFilter {
+    pks: [ID!]
+    search: String
+    tags: [String!]
+}
+
+input MediaInput {
+    file: Upload!
+    tags: [String!]
+    title: String!
+}
+
+input MediaMutateFilter {
+    pks: [ID!]
+}
+
+input MediaPartialInput {
+    title: String
+}
+
+input NewCompanyInput {
+    name: String
+    set: ID
+}
+
+input OffsetPaginationInput {
+    limit: Int! = -1
+    offset: Int! = 0
+}
+
+input OneToManyInput {
+    set: ID
+}
+
+input PointInput {
+    lat: Float!
+    lng: Float!
+}
+
+input PropertyInput {
+    id: ID
+    name: String!
+    values: [PropertyValueInput!]
+}
+
+input PropertyValueInput {
+    id: ID
+    name: String!
+}
+
+input PurchaseOrderFilter {
+    department: ID
+    itemPks: [ID!]
+    status: [String!]
+}
+
+input PurchaseOrderInput {
+    attachments: ManyToManyInput
+    department: OneToManyInput
+    history: ManyToOneInput
+    id: ID
+    items: [PurchaseOrderItemInput!]
+    notes: String
+    orderNumber: String
+    status: String
+    supplier: OneToManyInput
+    xeroContact: UUID
+}
+
+input PurchaseOrderItemDeliveredInput {
+    pk: ID!
+    qtySupplied: Float!
+}
+
+input PurchaseOrderItemInput {
+    deliveryDocketNumber: String
+    id: ID
+    item: OneToManyInput
+    itemCode: String
+    itemCostChanged: Boolean
+    itemCostExGst: Float
+    itemName: String
+    orderTableItem: OneToManyInput
+    qtyOrdered: Float!
+    unit: String
+}
+
+input PurchaseOrderMutateFilter {
+    pks: [ID!]
+}
+
+input PurchaseOrderOrder {
+    department: DepartmentOrder
+    poNumber: Ordering
+}
+
+input PurchaseOrderPartialInput {
+    attachments: ManyToManyInput
+    department: OneToManyInput
+    history: ManyToOneInput
+    id: ID
+    items: [PurchaseOrderItemInput!]
+    notes: String
+    orderNumber: String
+    status: String
+    supplier: OneToManyInput
+    xeroContact: UUID
+}
+
+input StocktakeEntryFilter {
+    stocktake: ID
+}
+
+input StocktakeEntryInput {
+    altitude: Float
+    count: Int
+    item: OneToManyInput
+    location: PointInput
+    stocktake: OneToManyInput!
+}
+
+input StocktakeEntryMutateFilter {
+    pks: [ID!]
+}
+
+input StocktakeFilter {
+    status: [String!]
+}
+
+input SupplierFilter {
+    hasOrders: Boolean
+    hasProducts: Boolean
+}
+
+input SupplierInput {
+    id: ID
+    name: String!
+    orderNumberError: String
+    orderNumberRegex: String
+    reference: String
+}
+
+input SupplierMutateFilter {
+    pks: [ID!]
+}
+
+input SupplierOrder {
+    name: Ordering
+}
+
+input SupplierPartialInput {
+    id: ID
+    name: String
+    orderNumberError: String
+    orderNumberRegex: String
+    reference: String
+}
+
+input UserInput {
+    email: String!
+    firstName: String
+    id: ID
+    isActive: Boolean
+    isStaff: Boolean
+    isSuperuser: Boolean
+    lastName: String
+    password: String!
+}
+
+input UserMutateFilter {
+    pks: [ID!]
+}
+
+input UserPartialInput {
+    email: String
+    firstName: String
+    id: ID
+    isActive: Boolean
+    isStaff: Boolean
+    isSuperuser: Boolean
+    lastName: String
+    newPassword: String
+}

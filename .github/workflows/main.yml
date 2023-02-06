@@ -1,0 +1,36 @@
+name: Snapcraft
+
+on:
+  push:
+    branches: [ production ]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@main
+
+      - name: Use .env
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+          envkey_FONTAWESOME_NPM_AUTH_TOKEN: ${{ secrets.FONTAWESOME_NPM_AUTH_TOKEN }}
+          envkey_VITE_API_URL: ${{ secrets.API_URL }}
+          envkey_VITE_API_KEY: ${{ secrets.API_KEY }}
+
+      - name: Install Snapcraft with LXD
+        uses: samuelmeuli/action-snapcraft@v1
+        with:
+          snapcraft_token: ${{ secrets.SNAPCRAFT_TOKEN }}
+          use_lxd: true
+
+      - name: Build snap
+        run: sg lxd -c 'snapcraft --use-lxd'
+        env:
+          PACKAGE_VERSION: ${{ steps.package-version.outputs.current-version }}
+
+      - name: Upload snap
+        run: snapcraft upload --release=edge "pcds-kiosk_${{ steps.package-version.outputs.current-version }}_amd64.snap"

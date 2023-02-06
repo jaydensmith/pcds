@@ -1,0 +1,45 @@
+@layer components {
+    .btn {
+        @apply relative border-2 bg-gray-200 focus:outline-none;
+
+        border-color: theme('colors.white') theme('colors.black') theme('colors.black') theme('colors.white');
+
+        &::before {
+            @apply block absolute inset-0 pointer-events-none border-2;
+
+            border-color: theme('colors.gray.100') theme('colors.gray.400') theme('colors.gray.400') theme('colors.gray.100');
+            content: '';
+        }
+
+        &:focus::after {
+            @apply block absolute inset-1 border border-black border-dotted;
+
+            content: '';
+        }
+
+        &:active,
+        &--active {
+            border-color: theme('colors.black') theme('colors.white') theme('colors.white') theme('colors.black');
+
+            &::before {
+                @apply block absolute inset-0 pointer-events-none border-2;
+
+                border-color: theme('colors.gray.400') theme('colors.gray.100') theme('colors.gray.100') theme('colors.gray.400');
+                content: '';
+            }
+        }
+
+        &:disabled,
+        &--disabled {
+            @apply text-gray-600;
+            border-color: theme('colors.gray.500') theme('colors.white') theme('colors.white') theme('colors.gray.500');
+
+            &::before {
+                @apply block absolute inset-0 pointer-events-none border-2;
+
+                border-color: theme('colors.gray.400') theme('colors.gray.100') theme('colors.gray.100') theme('colors.gray.400');
+                content: '';
+            }
+        }
+    }
+}

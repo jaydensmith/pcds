@@ -1,0 +1,12 @@
+node_modules
+.DS_Store
+dist
+build
+*.local
+.env
+.idea
+.npmrc
+yarn-error.log
+.vscode
+pcds-linux-*
+test.js

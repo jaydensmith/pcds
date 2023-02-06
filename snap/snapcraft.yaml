@@ -1,0 +1,137 @@
+name: pcds-kiosk
+summary: PCDS
+description: PCDS
+adopt-info: pcds-kiosk
+base: core20
+confinement: strict
+grade: devel
+compression: lzo
+
+architectures:
+  - build-on: amd64
+  - build-on: armhf
+  - build-on: arm64
+
+system-usernames:
+  snap_daemon: shared
+
+environment:
+  SOCKET_PATH: $SNAP_DATA/pcds-socket/pcds.sock
+  SCALE_COM_PORT: /dev/ttyS4
+  RFID_COM_PORT: /dev/ttyACM0
+
+layout:
+  /usr/share/icons:
+    bind: $SNAP/gnome-platform/usr/share/icons
+  /usr/share/fonts:
+    bind: $SNAP/gnome-platform/usr/share/fonts
+  /usr/local/share/fonts:
+    bind: $SNAP_COMMON/fonts
+
+apps:
+  pcds-kiosk:
+    daemon: simple
+    restart-condition: always
+    extensions: [ gnome-3-38 ]
+    after:
+      - pcdsd
+    environment:
+      GTK_USE_PORTAL: 0
+    command: usr/bin/wrapper
+    command-chain:
+      - bin/dbus-launch
+      - snap/command-chain/desktop-launch
+      # - usr/bin/drop-snap-daemon
+    slots:
+      - pcds-service
+    plugs:
+      - audio-playback
+      - browser-support
+      - hardware-observe
+      - network
+      - network-bind
+      - network-observe
+      - opengl
+      - process-control
+      - wayland
+
+  pcdsd:
+    daemon: simple
+    restart-condition: always
+    restart-delay: 5s
+    command: bin/pcdsd
+    plugs:
+      - pcds-plug
+      - network-bind
+      - serial-port
+
+slots:
+  pcds-service:
+    interface: content
+    content: pcds-socket
+    write:
+      - $SNAP_DATA
+
+plugs:
+  pcds-plug:
+    interface: content
+    content: pcds-socket
+    target: $SNAP_DATA
+
+parts:
+  pcds-kiosk:
+    source: .
+    plugin: npm
+    npm-node-version: 14.19.1
+    build-environment:
+      - PATH: "$PATH:$SNAPCRAFT_PART_BUILD/node_modules/.bin"
+    override-pull: |
+      snapcraftctl pull
+      snapcraftctl set-version $(cat ./package.json | grep -m 1 version | sed 's/[^0-9.]//g')
+    override-build: |
+      npm config set scripts-prepend-node-path true
+      npm config set unsafe-perm true
+
+      npm install electron-packager electron-rebuild
+      npm run build:vite
+      node build.js
+
+      cp -a ./pcds-linux-* $SNAPCRAFT_PART_INSTALL/electron-pcds
+    stage-packages:
+      - libnspr4
+      - libnss3
+      - net-tools
+      - ping
+      - util-linux
+    build-snaps:
+      - node/14/stable
+
+  pcdsd:
+    source: daemon
+    plugin: npm
+    npm-node-version: 14.19.1
+    build-environment:
+      - PATH: "$PATH:$SNAPCRAFT_PART_BUILD/node_modules/.bin"
+    after:
+      - pcds-kiosk
+    build-snaps:
+      - node/14/stable
+
+  dbus-launch:
+    plugin: dump
+    source: dbus
+    organize:
+      session.conf: etc/dbus-1/session.conf
+      dbus-launch: bin/dbus-launch
+    override-prime: |
+      snapcraftctl prime
+      sed -i "s/SNAP_NAME/$SNAPCRAFT_PROJECT_NAME/" $SNAPCRAFT_PRIME/etc/dbus-1/session.conf
+    stage-packages:
+      - dbus
+
+  wrapper:
+    plugin: dump
+    source: wrapper
+    organize:
+      wrapper.sh: usr/bin/wrapper
+      drop-snap-daemon.sh: usr/bin/drop-snap-daemon

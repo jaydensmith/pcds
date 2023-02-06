@@ -1,0 +1,10 @@
+@layer components {
+    .select {
+        @apply input;
+        @apply relative appearance-none bg-no-repeat rounded-none pr-4;
+
+        background-image: svg-load('assets/img/arrow.svg');
+        background-size: auto calc(100% - 4px);
+        background-position: top 2px right 2px;
+    }
+}

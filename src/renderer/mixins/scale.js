@@ -56,7 +56,7 @@ export default {
                     this.testWeight = this.weight;
                     this.timeoutStable = setTimeout(() => {
                         this.testStableWeight();
-                    }, 750);
+                    }, 500);
                 }
             } else {
                 try {
@@ -75,7 +75,7 @@ export default {
                 this.testWeight = this.weight;
                 this.timeoutStable = setTimeout(() => {
                     this.testStableWeight();
-                }, 750);
+                }, 500);
 
                 return;
             }

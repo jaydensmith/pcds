@@ -1,69 +1,55 @@
 name: pcds-kiosk
 summary: PCDS
 description: PCDS
-adopt-info: pcds-kiosk
-base: core20
+adopt-info: part-with-metadata
+base: core18
 confinement: strict
 grade: devel
 compression: lzo
 
 architectures:
   - build-on: amd64
-  - build-on: armhf
-  - build-on: arm64
+    run-on: amd64
 
 system-usernames:
   snap_daemon: shared
-
-environment:
-  SOCKET_PATH: $SNAP_DATA/pcds-socket/pcds.sock
-  SCALE_COM_PORT: /dev/ttyS4
-  RFID_COM_PORT: /dev/ttyACM0
-
-layout:
-  /usr/share/icons:
-    bind: $SNAP/gnome-platform/usr/share/icons
-  /usr/share/fonts:
-    bind: $SNAP/gnome-platform/usr/share/fonts
-  /usr/local/share/fonts:
-    bind: $SNAP_COMMON/fonts
 
 apps:
   pcds-kiosk:
     daemon: simple
     restart-condition: always
-    extensions: [ gnome-3-38 ]
+    restart-delay: 5s
     after:
       - pcdsd
-    environment:
-      GTK_USE_PORTAL: 0
-    command: usr/bin/wrapper
-    command-chain:
-      - bin/dbus-launch
-      - snap/command-chain/desktop-launch
-      # - usr/bin/drop-snap-daemon
+    extensions: [ gnome-3-28 ]
+    command: snap/command-chain/desktop-launch xwayland-kiosk-launch $SNAP/bin/drop-snap-daemon.sh $SNAP/electron-pcds/pcds --no-sandbox --enable-logging
     slots:
       - pcds-service
     plugs:
       - audio-playback
       - browser-support
-      - hardware-observe
       - network
       - network-bind
       - network-observe
       - opengl
-      - process-control
+      - pulseaudio
       - wayland
-
+      - x11-plug
   pcdsd:
     daemon: simple
     restart-condition: always
     restart-delay: 5s
-    command: bin/pcdsd
+    command: bin/node $SNAP/electron-pcds/serial-port
     plugs:
       - pcds-plug
       - network-bind
       - serial-port
+
+layout:
+  /usr/share/fonts:
+    bind: $SNAP/usr/share/fonts
+  /usr/local/share/fonts:
+    bind: $SNAP/usr/local/share/fonts
 
 slots:
   pcds-service:
@@ -73,65 +59,97 @@ slots:
       - $SNAP_DATA
 
 plugs:
+  x11-plug:
+    interface: x11
   pcds-plug:
     interface: content
     content: pcds-socket
     target: $SNAP_DATA
 
+environment:
+  XWAYLAND_FULLSCREEN_WINDOW_HINT: window_role="browser-window"
+  SOCKET_PATH: $SNAP_DATA/pcds-socket/pcds.sock
+  SCALE_COM_PORT: /dev/ttyS4
+  RFID_COM_PORT: /dev/ttyACM0
+
 parts:
-  pcds-kiosk:
+  part-with-metadata:
+    plugin: nil
     source: .
-    plugin: npm
-    npm-node-version: 14.19.1
+    override-build: |
+      snapcraftctl set-version $(cat ./package.json | grep -m 1 version | sed 's/[^0-9.]//g')
+
+  pcdsd:
+    plugin: nodejs
+    nodejs-version: 14.19.1
+    nodejs-package-manager: yarn
+    source: .
     build-environment:
       - PATH: "$PATH:$SNAPCRAFT_PART_BUILD/node_modules/.bin"
-    override-pull: |
-      snapcraftctl pull
-      snapcraftctl set-version $(cat ./package.json | grep -m 1 version | sed 's/[^0-9.]//g')
+    after: [ desktop-gtk3, xwayland-kiosk-helper, part-with-metadata ]
     override-build: |
-      npm config set scripts-prepend-node-path true
-      npm config set unsafe-perm true
+      snapcraftctl build
 
-      npm install electron-packager electron-rebuild
-      npm run build:vite
+      ../npm/bin/yarn add electron-packager electron-rebuild --unsafe-perm
+      ../npm/bin/yarn build:vite
       node build.js
 
       cp -a ./pcds-linux-* $SNAPCRAFT_PART_INSTALL/electron-pcds
+      cp ./bin/serial-port.js $SNAPCRAFT_PART_INSTALL/electron-pcds/serial-port
     stage-packages:
-      - libnspr4
+      - libasound2
+      - libgconf-2-4
+      - libpulse0
       - libnss3
+      - libx11-xcb1
+      - libxss1
+      - libxtst6
+      - libxkbcommon0
       - net-tools
       - ping
-      - util-linux
-    build-snaps:
-      - node/14/stable
+      - setpriv
+      - x11-xserver-utils
+    build-packages:
+      - build-essential
 
-  pcdsd:
-    source: daemon
-    plugin: npm
-    npm-node-version: 14.19.1
-    build-environment:
-      - PATH: "$PATH:$SNAPCRAFT_PART_BUILD/node_modules/.bin"
-    after:
-      - pcds-kiosk
-    build-snaps:
-      - node/14/stable
-
-  dbus-launch:
-    plugin: dump
-    source: dbus
-    organize:
-      session.conf: etc/dbus-1/session.conf
-      dbus-launch: bin/dbus-launch
+  # Adapted from snapcraft-desktop-helpers https://github.com/ubuntu/snapcraft-desktop-helpers/blob/master/snapcraft.yaml#L183
+  desktop-gtk3:
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-subdir: gtk
+    plugin: make
+    make-parameters: [ "FLAVOR=gtk3" ]
+    build-packages:
+      - build-essential
+      - libgtk-3-dev
+    stage-packages:
+      - libxkbcommon0  # XKB_CONFIG_ROOT
+      - ttf-ubuntu-font-family
+      - dmz-cursor-theme
+      - light-themes
+      - adwaita-icon-theme
+      - gnome-themes-standard
+      - shared-mime-info
+      - libgtk-3-0
+      - libgdk-pixbuf2.0-0
+      - libglib2.0-bin
+      - libgtk-3-bin
+      - unity-gtk3-module
+      - libappindicator3-1
+      - locales-all
+      - xdg-user-dirs
+      - ibus-gtk3
+      - libibus-1.0-5
     override-prime: |
       snapcraftctl prime
-      sed -i "s/SNAP_NAME/$SNAPCRAFT_PROJECT_NAME/" $SNAPCRAFT_PRIME/etc/dbus-1/session.conf
-    stage-packages:
-      - dbus
+      # Rebuild mime database as it seems to be missed
+      update-mime-database $SNAPCRAFT_PRIME/usr/share/mime
 
-  wrapper:
+  xwayland-kiosk-helper:
+    plugin: cmake
+    source: https://github.com/MirServer/xwayland-kiosk-helper.git
+    build-packages: [ build-essential ]
+    stage-packages: [ xwayland, i3, libegl1-mesa, libgl1-mesa-glx ]
+
+  pcds-runtime-helpers:
     plugin: dump
-    source: wrapper
-    organize:
-      wrapper.sh: usr/bin/wrapper
-      drop-snap-daemon.sh: usr/bin/drop-snap-daemon
+    source: snap/local/runtime-helpers

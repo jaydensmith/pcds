@@ -179,11 +179,7 @@
                 this.submitted = false;
             },
             async onWeightStable() {
-                if (this.inventoryItemUnit?.item?.subunitNormal !== 'KG' || !this.rfidData || this.submitted) {
-                    return;
-                }
-
-                if (this.$apollo.queries.inventoryItemUnit.loading) {
+                if (this.inventoryItemUnit?.item?.subunitNormal !== 'KG' || this.submitted) {
                     return;
                 }
 
